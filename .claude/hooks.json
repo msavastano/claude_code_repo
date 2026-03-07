@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(npm run build*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /path/to/project && npx tsc -b --noEmit 2>&1 | tail -20; if [ ${PIPESTATUS[0]} -ne 0 ]; then echo '\\n❌ TypeScript errors found. Fix them before building.'; exit 1; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write(src/**/*.{ts,tsx})",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /path/to/project && npx tsc -b --noEmit 2>&1 | tail -20; EXIT=$?; if [ $EXIT -ne 0 ]; then echo '\\n⚠️  TypeScript errors introduced. Please fix before continuing.'; fi; exit 0"
+          }
+        ]
+      },
+      {
+        "matcher": "Write(src/**/*.{ts,tsx})",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /path/to/project && npx eslint --no-warn-ignored $(echo $CLAUDE_FILE_PATH) 2>&1 | tail -10; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,3 +1,4 @@
+import { IconButton } from '@/components/IconButton'
 import { useState } from 'react'
 import './App.css'
 import reactLogo from './assets/react.svg'
@@ -30,9 +31,7 @@ function App() {
           <Button variant="primary" onClick={increment}>
             +
           </Button>
-          <Button variant="secondary" onClick={decrement}>
-            -
-          </Button>
+          <IconButton aria-label="Decrement" onClick={decrement} />
           <Button variant="danger" onClick={reset}>
             Reset
           </Button>

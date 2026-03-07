@@ -12,6 +12,7 @@ When the user asks to create a custom React hook, follow these steps exactly.
 ### Step 1: Determine Hook Details
 
 Ask the user (if not already specified):
+
 - Hook name (must start with `use`, camelCase, e.g., `useLocalStorage`, `useDebounce`)
 - What state or behavior the hook manages
 - Any configuration options it should accept
@@ -25,6 +26,7 @@ node .claude/.skills/react-hook/scripts/scaffold-hook.mjs <hookName>
 ```
 
 For example:
+
 ```bash
 node .claude/.skills/react-hook/scripts/scaffold-hook.mjs useToggle
 node .claude/.skills/react-hook/scripts/scaffold-hook.mjs useLocalStorage
@@ -50,6 +52,7 @@ This creates `src/hooks/{hookName}.ts` and `src/hooks/{hookName}.test.ts` with t
 Edit the generated `{hookName}.ts` to define the `Options` and `Return` interfaces and implement the hook body.
 
 **Testing rules (for the generated test file):**
+
 - Use `renderHook` from `@testing-library/react` for hook testing
 - Wrap state updates in `act()`
 - Vitest globals (`describe`, `it`, `expect`, `vi`) are available without import
@@ -60,6 +63,7 @@ Edit the generated `{hookName}.ts` to define the `Options` and `Return` interfac
 ### Step 4: Validate
 
 Run `npm run validate` from the project root to confirm:
+
 1. TypeScript compiles with no errors
 2. ESLint passes with zero warnings
 3. All tests pass
@@ -69,16 +73,19 @@ If validation fails, fix the issues before reporting success.
 ## Examples
 
 ### Example 1: State management hook
+
 User says: "Create a useToggle hook"
 
 Result: `src/hooks/useToggle.ts` with `UseToggleOptions` (initialValue), `UseToggleReturn` (value, toggle, setTrue, setFalse), and tests for all state transitions.
 
 ### Example 2: Side-effect hook
+
 User says: "Build a useDebounce hook"
 
 Result: `src/hooks/useDebounce.ts` with generic type parameter, delay option, cleanup on unmount, and tests using fake timers.
 
 ### Example 3: DOM interaction hook
+
 User says: "Make a useClickOutside hook"
 
 Result: `src/hooks/useClickOutside.ts` accepting a ref and callback, using `useEffect` for event listener management, tests using `userEvent` with a rendered component.
@@ -86,13 +93,17 @@ Result: `src/hooks/useClickOutside.ts` accepting a ref and callback, using `useE
 ## Common Issues
 
 ### renderHook import
+
 Import `renderHook` from `@testing-library/react` (NOT from a separate package):
+
 ```ts
 import { renderHook, act } from '@testing-library/react'
 ```
 
 ### Stale closure in callbacks
+
 Always use the callback form of setState or include dependencies in useCallback:
+
 ```ts
 // Correct
 const increment = useCallback(() => {
@@ -101,6 +112,7 @@ const increment = useCallback(() => {
 ```
 
 ### Missing cleanup
+
 For hooks that add event listeners or timers, always return a cleanup function from `useEffect`.
 
 For the full project conventions, consult `references/project-conventions.md`.

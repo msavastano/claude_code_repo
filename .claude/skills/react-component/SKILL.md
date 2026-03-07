@@ -12,6 +12,7 @@ When the user asks to create a new React component, follow these steps exactly.
 ### Step 1: Determine Component Details
 
 Ask the user (if not already specified):
+
 - Component name (PascalCase, e.g., `Modal`, `Card`, `TextInput`)
 - Whether it wraps a native HTML element (to extend its attributes)
 - Key props beyond the native ones
@@ -25,6 +26,7 @@ node .claude/.skills/react-component/scripts/scaffold-component.mjs <ComponentNa
 ```
 
 For example:
+
 ```bash
 node .claude/.skills/react-component/scripts/scaffold-component.mjs Modal div
 node .claude/.skills/react-component/scripts/scaffold-component.mjs Button button
@@ -47,6 +49,7 @@ This creates `{ComponentName}.tsx`, `{ComponentName}.test.tsx`, and `index.ts` w
 Edit the generated `{ComponentName}.tsx` to add the real JSX, props, and logic. The scaffold gives you the correct structure — fill in the implementation.
 
 **Testing rules (for the generated test file):**
+
 - Use `userEvent.setup()` for interactions (NOT `fireEvent`)
 - Use `screen` queries, prefer `getByRole` and `getByLabelText`
 - Test behavior, not implementation details
@@ -55,6 +58,7 @@ Edit the generated `{ComponentName}.tsx` to add the real JSX, props, and logic. 
 ### Step 4: Validate
 
 Run `npm run validate` from the project root to confirm:
+
 1. TypeScript compiles with no errors
 2. ESLint passes with zero warnings
 3. All tests pass
@@ -64,11 +68,13 @@ If validation fails, fix the issues before reporting success.
 ## Examples
 
 ### Example 1: Simple presentational component
+
 User says: "Create a Card component"
 
 Result: `src/components/Card/Card.tsx` with `CardProps` extending `HTMLAttributes<HTMLDivElement>`, co-located test file, and barrel export.
 
 ### Example 2: Interactive component
+
 User says: "Build a TextInput component with a label and error message"
 
 Result: `src/components/TextInput/TextInput.tsx` extending `InputHTMLAttributes<HTMLInputElement>` with `label` and `error` custom props, tests covering the label association and error display, and barrel export.
@@ -76,7 +82,9 @@ Result: `src/components/TextInput/TextInput.tsx` extending `InputHTMLAttributes<
 ## Common Issues
 
 ### ESLint: consistent-type-imports
+
 If you see this error, make sure all type-only imports use the `type` keyword:
+
 ```tsx
 // Wrong
 import { ReactNode } from 'react'
@@ -85,6 +93,7 @@ import { type ReactNode } from 'react'
 ```
 
 ### Coverage threshold not met
+
 The project enforces 80% coverage. Make sure tests cover the key branches (variants, loading state, disabled state, etc.).
 
 For the full project conventions, consult `references/project-conventions.md`.

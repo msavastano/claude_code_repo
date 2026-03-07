@@ -37,6 +37,12 @@
   padding: 2em;
 }
 
+.counter-controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
 .read-the-docs {
   color: #894c4c;
 }

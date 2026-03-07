@@ -1,9 +1,9 @@
 import { IconButton } from '@/components/IconButton'
 import { useState } from 'react'
-import './App.css'
+import '@/App.css'
 import reactLogo from './assets/react.svg'
-import { Button } from './components/Button'
-import { useCounter } from './hooks/useCounter'
+import { Button } from '@/components/Button'
+import { useCounter } from '@/hooks/useCounter'
 import viteLogo from '/vite.svg'
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
       <h1>This is a new project template</h1>
       <div className="card">
         <p>Count: {count}</p>
-        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+        <div className="counter-controls">
           <Button variant="primary" onClick={increment}>
             +
           </Button>

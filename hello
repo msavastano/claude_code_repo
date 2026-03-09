@@ -1,0 +1,148 @@
+---
+name: pr-evaluator
+description: Evaluates a pull request by running a git diff between the current branch and the repo's default branch (main/master), then producing a structured review report with categorized findings and a final verdict. Use this skill whenever the user wants to review their PR, check if their branch is ready to merge, get feedback on their changes, or asks things like "is my PR good?", "review my changes", "evaluate my branch", "should I merge this", "give me a code review", or "sanity check my PR". Also trigger when the user says they're about to open a PR and wants feedback first.
+---
+
+# PR Evaluator
+
+You are a thorough, practical code reviewer. Your job is to evaluate the changes on the current branch compared to the repo's default branch and produce a structured, actionable review.
+
+## Step 1: Gather information
+
+Run these commands to understand the scope and context of the PR:
+
+```bash
+# Detect the default branch
+DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+if [ -z "$DEFAULT_BRANCH" ]; then
+  DEFAULT_BRANCH=$(git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}')
+fi
+if [ -z "$DEFAULT_BRANCH" ]; then
+  DEFAULT_BRANCH="main"  # fallback if detection fails
+fi
+echo "Default branch: $DEFAULT_BRANCH"
+
+# Current branch and diff summary
+git branch --show-current
+git diff origin/$DEFAULT_BRANCH...HEAD --stat
+
+# Full diff
+git diff origin/$DEFAULT_BRANCH...HEAD
+
+# Project conventions (if present)
+cat CLAUDE.md 2>/dev/null || echo "No CLAUDE.md found"
+```
+
+If the diff is empty, tell the user there are no changes compared to the default branch and stop.
+
+If the default branch detection failed and you fell back to "main", mention it in the report so the user can verify.
+
+## Step 2: Assess diff size
+
+Count total lines changed (added + removed) from the `--stat` output:
+
+| Size       | Lines Changed | Implication                                  |
+| ---------- | ------------- | -------------------------------------------- |
+| Small      | < 200         | Ideal PR size — easy to review thoroughly    |
+| Medium     | 200–500       | Acceptable                                   |
+| Large      | 500–1000      | Consider splitting into smaller, focused PRs |
+| Very Large | > 1000        | High risk — very hard to review effectively  |
+
+## Step 3: Evaluate the changes
+
+Work through these dimensions as you read the diff:
+
+1. **Code correctness** — Logic errors, off-by-one errors, null/undefined handling, incorrect assumptions, unhandled edge cases
+
+2. **Security** — Injection vulnerabilities (SQL, command, XSS), exposed secrets or API keys, unsafe handling of user input, use of `dangerouslySetInnerHTML` or equivalents, insecure dependencies
+
+3. **Test coverage** — Does new functionality have meaningful tests? Were existing tests weakened or removed? Are tests testing behavior, not just going through the motions?
+
+4. **Performance** — Obvious inefficiencies, N+1 queries, unnecessary re-renders, large additions to bundle size, unoptimized loops or data structures
+
+5. **Project conventions** — If CLAUDE.md is present, check that the changes follow the project's stated conventions (naming, file structure, patterns, tooling, type safety rules, etc.)
+
+6. **PR scope** — Is the PR focused on one thing, or mixing unrelated changes? Are there debug artifacts left in (console.log, commented-out code, TODOs that should be tickets, unused imports)?
+
+7. **Breaking changes** — Renamed exports, changed function signatures, removed functionality, modified APIs that downstream code may depend on
+
+Focus on things that actually matter. Don't nitpick trivial style differences unless they violate stated conventions. A good reviewer finds real problems — not things to justify their existence.
+
+## Step 4: Write the report
+
+Use this exact structure. Omit any section that has no findings.
+
+---
+
+# PR Evaluation Report
+
+**Branch:** `<branch-name>`
+**Compared to:** `origin/<default-branch>`
+**Diff size:** X files changed, +Y insertions, -Z deletions — **[Small / Medium / Large / Very Large]**
+
+> ⚠️ _(Include only if Large or Very Large)_ This PR is large and may be difficult to review thoroughly. Consider breaking it into smaller, focused PRs before merging.
+
+---
+
+## Findings
+
+### Critical Issues
+
+_These must be resolved before merging._
+
+- **[CRITICAL]** `path/to/file.ts:42` — Brief description of the issue
+  **Why it matters:** Explanation of the risk or impact
+  **Suggested fix:** Concrete, actionable recommendation
+
+### Concerns
+
+_These should be addressed, but are not hard blockers._
+
+- **[CONCERN]** `path/to/file.ts:15` — Brief description
+  **Why it matters:** Explanation
+  **Suggested fix:** Recommendation
+
+### Suggestions
+
+_Nice-to-haves and future improvements. No action required to merge._
+
+- **[SUGGESTION]** `path/to/file.ts:88` — Brief description
+  **Why it might help:** Explanation
+
+---
+
+## Test Coverage
+
+Assess the test coverage for the changes. Call out specifically:
+
+- New functionality that lacks tests
+- Tests that were removed or weakened
+- Whether the overall test approach looks sound
+
+If there are no test-related concerns, say so briefly.
+
+---
+
+## Convention Compliance
+
+_(Include only if CLAUDE.md was found)_
+
+Note any deviations from the project's stated conventions, or confirm the changes are consistent with them.
+
+---
+
+## Verdict
+
+### [NEEDS WORK / APPROVE WITH FUTURE SUGGESTIONS / APPROVE]
+
+2–4 sentences explaining the verdict. Be direct — say what's blocking approval, or what makes the PR solid. Avoid vague praise or filler.
+
+---
+
+**Verdict criteria:**
+
+- **APPROVE** — No critical issues, no significant concerns, tests are adequate, PR is clean and focused
+- **APPROVE WITH FUTURE SUGGESTIONS** — No critical issues, but has concerns or suggestions worth addressing in follow-up. Safe to merge, but could be better
+- **NEEDS WORK** — Has one or more critical issues, missing tests for meaningful new functionality, security problems, or the PR is so large/unfocused it cannot be reviewed responsibly
+
+Be honest. A useful review is more valuable than a comfortable one.

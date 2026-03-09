@@ -1,4 +1,4 @@
-Create a new custom React hook. The argument $ARGUMENTS should be the hook name (e.g., useLocalStorage).
+# Create a new custom React hook. The argument $ARGUMENTS should be the hook name (e.g., useLocalStorage)
 
 1. Create `src/hooks/$ARGUMENTS.ts`:
    - Properly typed with generics where appropriate

@@ -1,4 +1,4 @@
-Create a new React component with the following structure. The argument $ARGUMENTS should be the component name in PascalCase.
+# Create a new React component with the following structure. The argument $ARGUMENTS should be the component name in PascalCase. For example, if $ARGUMENTS is "Button", the component file should be `src/components/Button/Button.tsx`, the test file should be `src/components/Button/Button.test.tsx`, and the barrel export should be in `src/components/Button/index.ts`
 
 1. Create `src/components/$ARGUMENTS/$ARGUMENTS.tsx`:
    - Functional component with proper TypeScript props interface

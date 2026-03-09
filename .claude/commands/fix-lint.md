@@ -1,4 +1,4 @@
-Run `npm run lint` and fix ALL reported issues. For each issue:
+# Run `npm run lint` and fix ALL reported issues. For each issue
 
 1. Read the error message and file location
 2. Open the file and understand the context
@@ -7,6 +7,7 @@ Run `npm run lint` and fix ALL reported issues. For each issue:
 5. Re-run `npm run lint` to verify zero warnings/errors remain
 
 Do NOT:
+
 - Add `eslint-disable` comments unless the rule is genuinely wrong for that case
 - Change eslint config to weaken rules
 - Skip files or ignore warnings

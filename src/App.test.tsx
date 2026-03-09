@@ -6,7 +6,7 @@ describe('App', () => {
   it('renders the heading', () => {
     render(<App />)
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Vite + React + TypeScript',
+      'This is a new project template',
     )
   })
 
@@ -27,7 +27,7 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole('button', { name: '-' }))
+    await user.click(screen.getByRole('button', { name: 'Decrement' }))
     expect(screen.getByText('Count: 0')).toBeInTheDocument() // min is 0
   })
 

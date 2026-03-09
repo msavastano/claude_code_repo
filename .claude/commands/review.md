@@ -1,4 +1,4 @@
-Review the current changes (staged and unstaged) for code quality:
+# Review the current changes (staged and unstaged) for code quality
 
 1. Run `git diff` and `git diff --cached` to see all changes
 2. For each changed file, check:

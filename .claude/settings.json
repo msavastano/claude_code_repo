@@ -8,9 +8,9 @@
       "Bash(npx prettier *)",
       "Bash(git *)"
     ],
-    "deny": [
-      "Bash(rm -rf /)",
-      "Bash(npm publish*)"
-    ]
+    "deny": ["Bash(rm -rf /)", "Bash(npm publish*)"]
+  },
+  "enabledPlugins": {
+    "pr-review-toolkit@claude-plugins-official": true
   }
 }
